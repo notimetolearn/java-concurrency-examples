@@ -1,34 +1,38 @@
 package com.notimetolearn.concurrent.basics;
 
+class SynchronizedCounter {
+
+    private int counter = 0;
+
+    public synchronized void increment(){
+        System.out.println(Thread.currentThread().getName()+": incrementing");
+        counter++;
+    }
+
+    public synchronized void decrement(){
+        System.out.println(Thread.currentThread().getName()+": decrementing");
+        counter--;
+    }
+
+    public int value(){
+        return counter;
+    }
+}
+
 public class SynchronizedDemo {
 
-    private int count = 0;
-
-    private synchronized void increment(){
-        count++;
-    }
-
-    private void unSyncIncrement(){
-        count++;
-    }
-
     public static void main(String... args){
-        SynchronizedDemo sd = new SynchronizedDemo();
-        sd.doSomeWork();
-    }
 
-    public void doSomeWork() {
-
-        //see by executing unsyncIncrement to see the effects of synchronized keyword
-        Thread t1 = new Thread(() -> {
-            for(int i=0; i<10000;i++){
-                increment();
+        SynchronizedCounter sc = new SynchronizedCounter();
+        Thread t1 = new Thread(()-> {
+            for(int i=0; i< 10000;i++){
+                sc.increment();
             }
         });
 
-        Thread t2 = new Thread(() -> {
-            for(int i=0; i<10000;i++){
-                increment();
+        Thread t2 = new Thread(()-> {
+            for(int i=0; i< 10000;i++){
+                sc.decrement();
             }
         });
 
@@ -41,8 +45,6 @@ public class SynchronizedDemo {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        System.out.println(count);
-
+        System.out.println(sc.value());
     }
 }
